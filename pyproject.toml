@@ -1,0 +1,78 @@
+[tool.poetry]
+name = "ocr-2-0-demo"
+version = "0.1.0"
+description = "OCR 2.0 Demo App using GOT-OCR2.0 model"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "ocr_app", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,!=3.9.7,<4.0"
+transformers = "^4.31.0"
+tiktoken = "*"
+verovio = "*"
+torch = "^2.0.0"
+torchvision = "*"
+accelerate = "*"
+python-dotenv = "*"
+streamlit = "^1.32.0"
+matplotlib = "*"
+pillow = "*"
+safetensors = "*"
+watchdog = "*"  # For better Streamlit performance
+uvloop = "^0.21.0"  # For asyncio on Unix/Mac
+nest-asyncio = "^1.6.0"  # For asyncio fallback
+
+[tool.poetry.group.dev.dependencies]
+isort = "*"
+black = "*"
+pytest = "*"
+mypy = "*"
+types-pillow = "*"
+mypy-extensions = "*"
+types-setuptools = "*"
+
+[tool.poetry.scripts]
+download-model = "ocr_app.download_model:download_model"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+strict_optional = true
+
+[[tool.mypy.overrides]]
+module = [
+    "matplotlib.*",
+    "streamlit.*",
+    "transformers.*",
+    "torch",
+    "torch.*",
+    "PIL",
+    "PIL.*",
+    "uvloop",
+    "uvloop.*",
+    "nest_asyncio",
+    "nest_asyncio.*",
+    "torchvision",
+    "torchvision.*",
+]
+ignore_missing_imports = true
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
