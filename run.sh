@@ -77,11 +77,11 @@ fi
 
 # Install dependencies
 echo -e "${GREEN}Installing dependencies...${NC}"
-poetry install
+poetry install > /dev/null 2>&1
 
 # Check if we need to install specific packages that might cause issues
 echo -e "${GREEN}Ensuring all critical dependencies are installed...${NC}"
-poetry run pip install --upgrade torch torchvision accelerate
+poetry run pip install --upgrade torch torchvision accelerate > /dev/null 2>&1
 
 # Apple Silicon optimization
 if [[ "$(uname -m)" == "arm64" && "$(uname)" == "Darwin" ]]; then

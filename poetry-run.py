@@ -6,11 +6,13 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 def run():
     """Run the Streamlit app."""
     # Run streamlit
     cmd = ["streamlit", "run", "src/ocr_app/app.py"]
     subprocess.run(cmd)
 
+
 if __name__ == "__main__":
-    run() 
+    run()
