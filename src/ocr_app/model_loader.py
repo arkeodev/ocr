@@ -1,20 +1,9 @@
 import os
 import sys
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
-import streamlit as st
-
-from ocr_app.logger import (
-    debug,
-    error,
-    info,
-    is_clean_mode,
-    is_terminal_only,
-    spinner,
-    success,
-    warning,
-)
+from ocr_app.logger import debug, error, info, spinner, success, warning
 
 # Set environment variables for Apple Silicon
 os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"  # Use minimal GPU memory
@@ -22,6 +11,9 @@ os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"  # Enable MPS fallback
 
 # Default cache directory
 MODEL_CACHE_DIR = Path("model_cache")
+
+# Simple model cache to avoid reloading
+_model_cache: Dict[str, Tuple[Any, Any]] = {}
 
 
 def setup_cache_dir(cache_dir: Optional[Path] = None) -> Path:
@@ -41,7 +33,6 @@ def setup_cache_dir(cache_dir: Optional[Path] = None) -> Path:
     return cache_dir
 
 
-@st.cache_resource
 def load_model(cache_dir: Optional[Path] = None) -> Tuple:
     """Load the OCR model and tokenizer.
 
@@ -51,6 +42,12 @@ def load_model(cache_dir: Optional[Path] = None) -> Tuple:
     Returns:
         Tuple of (model, tokenizer)
     """
+    # Check if model is already cached in memory
+    cache_key = str(cache_dir or MODEL_CACHE_DIR)
+    if cache_key in _model_cache:
+        debug("Using cached model from memory")
+        return _model_cache[cache_key]
+
     try:
         import torch
         from transformers import AutoModel, AutoTokenizer
@@ -59,10 +56,6 @@ def load_model(cache_dir: Optional[Path] = None) -> Tuple:
         cache_dir = setup_cache_dir(cache_dir)
         hf_cache_dir = cache_dir / "models"
         hf_cache_dir.mkdir(exist_ok=True)
-
-        # Check if we should show UI elements
-        clean_mode = is_clean_mode()
-        terminal_only = is_terminal_only()
 
         # Check for CPU force flag
         force_cpu = os.environ.get("FORCE_CPU", "0") == "1"
@@ -87,7 +80,6 @@ def load_model(cache_dir: Optional[Path] = None) -> Tuple:
 
         # Log version info
         debug(f"Device: {device_map}")
-
         debug(f"Loading model from cache: {cache_dir}")
 
         # Load tokenizer
@@ -149,7 +141,11 @@ def load_model(cache_dir: Optional[Path] = None) -> Tuple:
                 )
 
         model = model.eval()
-        debug("Model loaded successfully!")
+        success("Model loaded successfully!")
+
+        # Cache the model in memory
+        _model_cache[cache_key] = (model, tokenizer)
+
         return model, tokenizer
 
     except Exception as e:
