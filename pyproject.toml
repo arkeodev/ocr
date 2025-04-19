@@ -27,11 +27,15 @@ pre-commit = "^4.2.0"
 [tool.poetry.group.dev.dependencies]
 isort = "*"
 black = "*"
+flake8 = "^7.0.0"
 pytest = "*"
 mypy = "*"
 types-pillow = "*"
 mypy-extensions = "*"
 types-setuptools = "*"
+flake8-bugbear = "^24.12.12"
+flake8-comprehensions = "^3.16.0"
+flake8-unused-arguments = "^0.0.13"
 
 [tool.poetry.scripts]
 download-model = "ocr_app.download_model:download_model"
@@ -77,3 +81,13 @@ target-version = ["py38"]
 profile = "black"
 line_length = 88
 multi_line_output = 3
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = "E203"
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+]
