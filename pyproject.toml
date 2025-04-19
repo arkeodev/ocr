@@ -23,6 +23,8 @@ watchdog = "*"  # For better Streamlit performance
 uvloop = "^0.21.0"  # For asyncio on Unix/Mac
 nest-asyncio = "^1.6.0"  # For asyncio fallback
 pre-commit = "^4.2.0"
+typer = {extras = ["all"], version = "^0.9.0"}  # CLI app framework
+rich = "^13.7.0"  # Rich text and styling for terminal output
 
 [tool.poetry.group.dev.dependencies]
 isort = "*"
@@ -70,6 +72,10 @@ module = [
     "nest_asyncio.*",
     "torchvision",
     "torchvision.*",
+    "typer",
+    "typer.*",
+    "rich",
+    "rich.*"
 ]
 ignore_missing_imports = true
 
